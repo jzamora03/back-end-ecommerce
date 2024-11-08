@@ -18,14 +18,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-/**
- * Configuración de seguridad para la aplicación de e-commerce.
- *
- * Proporciona la configuración para autenticación y autorización de Spring Security,
- * así como la configuración para manejar CORS.
- * @Author Jhoseph Zamora - jhosephzc@gmail.com
- * @Date 8 de noviembre de 2024
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -36,25 +28,11 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    /**
-     * Bean para la codificación de contraseñas.
-     * Utiliza BCrypt para proporcionar un nivel de seguridad alto al almacenar las contraseñas.
-     *
-     * @return Un PasswordEncoder de tipo BCryptPasswordEncoder.
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Configura el `AuthenticationManager` para autenticar a los usuarios.
-     * Utiliza el servicio de detalles de usuario (`userDetailsService`) y un codificador de contraseñas.
-     *
-     * @param http El objeto HttpSecurity para configurar la seguridad.
-     * @return El `AuthenticationManager` configurado.
-     * @throws Exception Si ocurre un error durante la configuración.
-     */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
@@ -67,14 +45,6 @@ public class SecurityConfig {
         return authenticationManagerBuilder.build();
     }
 
-    /**
-     * Configura la cadena de filtros de seguridad para la aplicación.
-     * Incluye reglas para la autenticación, autorización, CORS, y CSRF.
-     *
-     * @param http El objeto HttpSecurity para definir la configuración de seguridad.
-     * @return La cadena de filtros de seguridad (`SecurityFilterChain`).
-     * @throws Exception Si ocurre un error durante la configuración.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -83,22 +53,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                         .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/productos/**").permitAll()
+                        .requestMatchers("/api/inventarios/**").permitAll()
+                        .requestMatchers("/api/ordenes/**").permitAll()
                         .anyRequest().authenticated()
                 )
-
-                // Añade el filtro de autenticación JWT antes del filtro de autenticación de usuario y contraseña
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Construye y retorna la configuración de seguridad
         return http.build();
     }
 
-    /**
-     * Configura el CORS para permitir solicitudes desde ciertos dominios.
-     * Especifica qué métodos HTTP y encabezados están permitidos.
-     *
-     * @return Una fuente de configuración de CORS (`CorsConfigurationSource`).
-     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

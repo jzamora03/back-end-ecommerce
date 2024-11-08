@@ -27,31 +27,16 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
-    /**
-     * Endpoint para registrar un nuevo usuario.
-     *
-     * @param user El objeto `Usuario` con la información del nuevo usuario.
-     * @return Una respuesta HTTP 200 OK si el registro es exitoso,
-     *         o HTTP 409 CONFLICT si el número de identificación ya está registrado.
-     */
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Usuario user) {
         try {
             usuarioService.registrarUsuario(user);
             return ResponseEntity.ok("Usuario registrado correctamente");
         } catch (IllegalArgumentException e) {
-            // Devuelve HTTP 409 CONFLICT si el número de identificación ya está registrado
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
-    /**
-     * Endpoint para autenticar un usuario.
-     *
-     * @param user El objeto `Usuario` con el número de identificación y la contraseña del usuario.
-     * @return Una respuesta HTTP 200 OK si las credenciales son correctas, que incluye un token JWT.
-     *         Devuelve HTTP 401 UNAUTHORIZED si las credenciales son incorrectas.
-     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario user) {
         Usuario foundUser = usuarioService.autenticarUsuario(user.getNumeroIdentificacion(), user.getPassword());
@@ -64,56 +49,28 @@ public class AuthController {
         }
     }
 
-    /**
-     * Clase interna para representar la respuesta del login que incluye el mensaje y el token.
-     */
     static class LoginResponse {
         private String message;
         private String token;
 
-        /**
-         * Constructor de la clase LoginResponse.
-         *
-         * @param message El mensaje de respuesta.
-         * @param token El token JWT generado.
-         */
+
         public LoginResponse(String message, String token) {
             this.message = message;
             this.token = token;
         }
 
-        /**
-         * Obtiene el mensaje de la respuesta.
-         *
-         * @return El mensaje de la respuesta.
-         */
         public String getMessage() {
             return message;
         }
 
-        /**
-         * Establece el mensaje de la respuesta.
-         *
-         * @param message El mensaje de la respuesta.
-         */
         public void setMessage(String message) {
             this.message = message;
         }
 
-        /**
-         * Obtiene el token JWT de la respuesta.
-         *
-         * @return El token JWT generado.
-         */
         public String getToken() {
             return token;
         }
 
-        /**
-         * Establece el token JWT de la respuesta.
-         *
-         * @param token El token JWT generado.
-         */
         public void setToken(String token) {
             this.token = token;
         }
