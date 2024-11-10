@@ -10,15 +10,13 @@ import com.example.ecomerce.tps.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class OrdenService {
-
-    private Long usuarioId;
-    private List<DetalleOrdenService> detalles;
 
     @Autowired
     private OrdenRepository ordenRepository;
@@ -40,7 +38,14 @@ public class OrdenService {
         // Crear nueva instancia de la orden
         Orden orden = new Orden();
         orden.setUsuario(usuario);
-        orden.setFechaOrden(new Date());
+
+        // Formatear la fecha para evitar los milisegundos
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = LocalDateTime.now().format(formatter);
+        LocalDateTime fechaSinMilisegundos = LocalDateTime.parse(formattedDate, formatter);
+
+        orden.setFechaOrden(fechaSinMilisegundos); // Asignar fecha formateada
+
         orden.setEstado("Pendiente");
 
         // Inicializar lista de detalles y calcular el total de la orden
@@ -65,7 +70,7 @@ public class OrdenService {
         orden.setTotalOrden(totalOrden);
         orden.setDetalles(detalles);
 
-        // Guardar la orden en la base de datos
+        // Guardar la orden en la base de datos y retornarla
         return ordenRepository.save(orden);
     }
 
@@ -77,22 +82,5 @@ public class OrdenService {
     // Obtener una orden por ID
     public Orden obtenerOrdenPorId(Long ordenId) {
         return ordenRepository.findById(ordenId).orElse(null);
-    }
-
-    // Getters y Setters
-    public Long getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public List<DetalleOrdenService> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(List<DetalleOrdenService> detalles) {
-        this.detalles = detalles;
     }
 }

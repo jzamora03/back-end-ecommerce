@@ -1,7 +1,7 @@
 package com.example.ecomerce.tps.model;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -15,7 +15,7 @@ public class Orden {
     @JoinColumn(name = "usuario_id", referencedColumnName = "numeroIdentificacion")
     private Usuario usuario;
 
-    private Date fechaOrden;
+    private LocalDateTime fechaOrden; // Cambiado a LocalDateTime
     private Double totalOrden;
     private String estado;
 
@@ -39,11 +39,11 @@ public class Orden {
         this.usuario = usuario;
     }
 
-    public Date getFechaOrden() {
+    public LocalDateTime getFechaOrden() {
         return fechaOrden;
     }
 
-    public void setFechaOrden(Date fechaOrden) {
+    public void setFechaOrden(LocalDateTime fechaOrden) {
         this.fechaOrden = fechaOrden;
     }
 

@@ -2,6 +2,7 @@ package com.example.ecomerce.tps.controller;
 
 import com.example.ecomerce.tps.model.Orden;
 import com.example.ecomerce.tps.service.OrdenService;
+import com.example.ecomerce.tps.service.DetalleOrdenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,22 +17,7 @@ public class OrdenController {
     @Autowired
     private OrdenService ordenService;
 
-    @PostMapping("/crearOrden")
-    public ResponseEntity<Orden> crearOrden(@RequestBody OrdenService ordenRequest) {
-        try {
-            Orden nuevaOrden = ordenService.crearOrden(ordenRequest.getUsuarioId(), ordenRequest.getDetalles());
-            return new ResponseEntity<>(nuevaOrden, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Orden>> obtenerTodasLasOrdenes() {
-        List<Orden> ordenes = ordenService.obtenerTodasLasOrdenes();
-        return ResponseEntity.ok(ordenes);
-    }
-
+    // Obtener una orden por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Orden> obtenerOrdenPorId(@PathVariable Long id) {
         Orden orden = ordenService.obtenerOrdenPorId(id);
@@ -39,6 +25,71 @@ public class OrdenController {
             return ResponseEntity.ok(orden);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // Clase interna para la solicitud de creación de la orden
+    static class CrearOrdenRequest {
+        private Long usuarioId;
+        private List<DetalleOrdenService> detalles;
+
+        // Getters y Setters
+        public Long getUsuarioId() {
+            return usuarioId;
+        }
+
+        public void setUsuarioId(Long usuarioId) {
+            this.usuarioId = usuarioId;
+        }
+
+        public List<DetalleOrdenService> getDetalles() {
+            return detalles;
+        }
+
+        public void setDetalles(List<DetalleOrdenService> detalles) {
+            this.detalles = detalles;
+        }
+    }
+
+    // Crear una nueva orden
+    @PostMapping("/crearOrden")
+    public ResponseEntity<?> crearOrden(@RequestBody CrearOrdenRequest crearOrdenRequest) {
+        try {
+            Orden nuevaOrden = ordenService.crearOrden(crearOrdenRequest.getUsuarioId(), crearOrdenRequest.getDetalles());
+            return new ResponseEntity<>(
+                    new CrearOrdenResponse(nuevaOrden.getOrdenId(), "Orden creada exitosamente"),
+                    HttpStatus.CREATED
+            );
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Clase interna para la respuesta de creación de la orden
+    static class CrearOrdenResponse {
+        private Long ordenId;
+        private String mensaje;
+
+        public CrearOrdenResponse(Long ordenId, String mensaje) {
+            this.ordenId = ordenId;
+            this.mensaje = mensaje;
+        }
+
+        // Getters y Setters
+        public Long getOrdenId() {
+            return ordenId;
+        }
+
+        public void setOrdenId(Long ordenId) {
+            this.ordenId = ordenId;
+        }
+
+        public String getMensaje() {
+            return mensaje;
+        }
+
+        public void setMensaje(String mensaje) {
+            this.mensaje = mensaje;
         }
     }
 }
