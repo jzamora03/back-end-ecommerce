@@ -42,11 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
 
-    // Método para extraer el token del encabezado "Authorization"
     private String extractToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7); // Extraer el token
+            String token = header.substring(7);
             return token;
         }
         return null;

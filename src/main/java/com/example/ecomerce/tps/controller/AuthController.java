@@ -8,15 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controlador REST para la autenticación y registro de usuarios.
- *
- * Proporciona endpoints para registrar nuevos usuarios y autenticar usuarios existentes,
- * generando un token JWT para el acceso seguro a otros servicios.
- *
- * @Author Jhoseph Zamora - jhosephzc@gmail.com
- * @Date 8 de noviembre de 2024
- */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

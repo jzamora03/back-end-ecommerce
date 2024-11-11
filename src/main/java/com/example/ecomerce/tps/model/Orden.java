@@ -1,10 +1,12 @@
 package com.example.ecomerce.tps.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties({"usuario", "detalles"})
 public class Orden {
 
     @Id

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/ordenes")
 public class OrdenController {
@@ -17,13 +18,12 @@ public class OrdenController {
     @Autowired
     private OrdenService ordenService;
 
-    // Obtener una orden por su ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Orden> obtenerOrdenPorId(@PathVariable Long id) {
-        Orden orden = ordenService.obtenerOrdenPorId(id);
-        if (orden != null) {
-            return ResponseEntity.ok(orden);
-        } else {
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Orden>> obtenerOrdenesPorUsuario(@PathVariable Long usuarioId) {
+        try {
+            List<Orden> ordenes = ordenService.obtenerOrdenesPorUsuario(usuarioId);
+            return ResponseEntity.ok(ordenes);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }

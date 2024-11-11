@@ -83,4 +83,13 @@ public class OrdenService {
     public Orden obtenerOrdenPorId(Long ordenId) {
         return ordenRepository.findById(ordenId).orElse(null);
     }
+
+    public List<Orden> obtenerOrdenesPorUsuario(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findByNumeroIdentificacion(usuarioId.toString());
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        return ordenRepository.findByUsuarioNumeroIdentificacion(usuario.getNumeroIdentificacion());
+    }
 }
