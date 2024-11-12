@@ -23,33 +23,26 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.obtenerTodosLosProductos());
     }
 
+
+    @GetMapping("/activos")
+    public ResponseEntity<List<Producto>> obtenerProductosActivos() {
+        List<Producto> productosActivos = productoService.obtenerProductosActivos();
+        return ResponseEntity.ok(productosActivos);
+    }
+
     @PostMapping("/crearProducto")
     public ResponseEntity<Map<String, String>> crearProducto(@RequestBody Producto producto) {
         try {
             productoService.crearProducto(producto);
-
-            // Crear un mapa con el mensaje de respuesta
             Map<String, String> response = new HashMap<>();
             response.put("message", "Producto registrado exitosamente!");
-
-            return ResponseEntity.ok(response);  // Devolver como JSON
+            return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             Map<String, String> response = new HashMap<>();
             response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
     }
-
-//    @PostMapping("/crearProducto")
-//    public ResponseEntity<String> crearProducto(@RequestBody Producto producto) {
-//        try{
-//            productoService.crearProducto(producto);
-//            return ResponseEntity.ok("Producto registrado exitosamente!");
-//        }catch (IllegalArgumentException e){
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-//        }
-//      //  return ResponseEntity.ok(productoService.crearProducto(producto));
-//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {

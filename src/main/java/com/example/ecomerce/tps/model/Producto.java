@@ -13,6 +13,7 @@ public class Producto {
     private Double precio;
     private String categoria;
     private String imagenUrl;
+    private String productoActivo = "Activo";
 
     public Long getProductoId() {
         return productoId;
@@ -60,5 +61,17 @@ public class Producto {
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public void setProductoActivo(String productoActivo) {
+        if (productoActivo.equalsIgnoreCase("Activo") || productoActivo.equalsIgnoreCase("Inactivo")) {
+            this.productoActivo = productoActivo;
+        } else {
+            throw new IllegalArgumentException("El estado del producto debe ser 'Activo' o 'Inactivo'.");
+        }
+    }
+
+    public String getProductoActivo() {
+        return productoActivo;
     }
 }

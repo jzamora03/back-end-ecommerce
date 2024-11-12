@@ -17,7 +17,15 @@ public class ProductoService {
         return productoRepository.findAll();
     }
 
+    public List<Producto> obtenerProductosActivos() {
+        return productoRepository.findByProductoActivo("Activo");
+    }
+
     public Producto crearProducto(Producto producto) {
+        if (producto.getProductoActivo() == null ||
+                (!producto.getProductoActivo().equalsIgnoreCase("Activo") && !producto.getProductoActivo().equalsIgnoreCase("Inactivo"))) {
+            producto.setProductoActivo("Activo");
+        }
         return productoRepository.save(producto);
     }
 
@@ -33,6 +41,7 @@ public class ProductoService {
             productoExistente.setDescripcion(producto.getDescripcion());
             productoExistente.setCategoria(producto.getCategoria());
             productoExistente.setImagenUrl(producto.getImagenUrl());
+            productoExistente.setProductoActivo(producto.getProductoActivo());
             return productoRepository.save(productoExistente);
         }
         return null;
@@ -41,4 +50,6 @@ public class ProductoService {
     public void eliminarProducto(Long id) {
         productoRepository.deleteById(id);
     }
+
+
 }
