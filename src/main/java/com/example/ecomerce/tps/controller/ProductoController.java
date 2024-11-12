@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -22,15 +24,32 @@ public class ProductoController {
     }
 
     @PostMapping("/crearProducto")
-    public ResponseEntity<String> crearProducto(@RequestBody Producto producto) {
-        try{
+    public ResponseEntity<Map<String, String>> crearProducto(@RequestBody Producto producto) {
+        try {
             productoService.crearProducto(producto);
-            return ResponseEntity.ok("Producto registrado exitosamente!");
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+
+            // Crear un mapa con el mensaje de respuesta
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Producto registrado exitosamente!");
+
+            return ResponseEntity.ok(response);  // Devolver como JSON
+        } catch (IllegalArgumentException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
-      //  return ResponseEntity.ok(productoService.crearProducto(producto));
     }
+
+//    @PostMapping("/crearProducto")
+//    public ResponseEntity<String> crearProducto(@RequestBody Producto producto) {
+//        try{
+//            productoService.crearProducto(producto);
+//            return ResponseEntity.ok("Producto registrado exitosamente!");
+//        }catch (IllegalArgumentException e){
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+//        }
+//      //  return ResponseEntity.ok(productoService.crearProducto(producto));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
@@ -39,14 +58,23 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> actualizarProducto(@PathVariable Long id, @RequestBody Producto producto) {
+    public ResponseEntity<Map<String, String>> actualizarProducto(@PathVariable Long id, @RequestBody Producto producto) {
         Producto productoActualizado = productoService.actualizarProducto(id, producto);
-        return productoActualizado != null ? ResponseEntity.ok("Producto actualizado correctamente") : ResponseEntity.notFound().build();
+        if (productoActualizado != null) {
+            // Devolver JSON en lugar de texto simple
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Producto actualizado correctamente");
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarProducto(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> eliminarProducto(@PathVariable Long id) {
         productoService.eliminarProducto(id);
-        return ResponseEntity.noContent().build();
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Producto eliminado correctamente");
+        return ResponseEntity.ok(response);
     }
 }
